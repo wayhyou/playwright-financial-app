@@ -1,0 +1,13 @@
+
+# Playwright
+node_modules/
+/note/
+/test-results/
+/tests/financial-app/screenshots/
+/tests/financial-app/traces/
+/tests/financial-app/videos/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+.env.local
+/tests/financial-app/expense.spec.js
