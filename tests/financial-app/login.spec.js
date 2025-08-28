@@ -45,7 +45,7 @@ test.describe('Login Page Tests', () => {
     await context.close();
   });
 
-  test('should display login page', async () => {
+  test('Should display login page', async () => {
     // URL and Title
     await expect(page).toHaveURL('/login');
     await expect(page).toHaveTitle('Financial App | Login');
@@ -66,7 +66,7 @@ test.describe('Login Page Tests', () => {
     await page.screenshot({ path: 'tests/financial-app/screenshots/login/login-page.png' });
   });
 
-  test('successfully login with valid credentials', async () => {
+  test('TC-Log-001-001 - Successfully login with valid credentials', async () => {
     // Fill in valid email and password
     await Login.inputCredentials(process.env.VALID_EMAIL, process.env.VALID_PASSWORD);
 
@@ -87,7 +87,7 @@ test.describe('Login Page Tests', () => {
     await page.screenshot({ path: 'tests/financial-app/screenshots/login/login-success.png' });
   });
 
-  test('failed login with empty (email & password) credentials', async () => {
+  test('TC-Log-001-002 - Failed login with empty (email & password) credentials', async () => {
     // Leave both email and password empty
     await Login.inputCredentials();
 
@@ -103,7 +103,7 @@ test.describe('Login Page Tests', () => {
     await page.screenshot({ path: 'tests/financial-app/screenshots/login/login-fail[empty-email-password].png' });
   });
 
-  test('failed login with invalid (email & password) credentials', async () => {
+  test('TC-Log-001-003 - Failed login with invalid (email[not registered] & password) credentials', async () => {
     // Fill in invalid email and password
     await Login.inputCredentials(process.env.INVALID_EMAIL, process.env.INVALID_PASSWORD);
 
@@ -117,7 +117,7 @@ test.describe('Login Page Tests', () => {
     await page.screenshot({ path: 'tests/financial-app/screenshots/login/login-fail[invalid-email-password].png' });
   });
 
-  test('failed login with invalid (password) credentials', async () => {
+  test('TC-Log-001-004 - Failed login with invalid (password) credentials', async () => {
     // Fill in valid email and invalid password
     await Login.inputCredentials(process.env.VALID_EMAIL, process.env.INVALID_PASSWORD);
 
@@ -131,7 +131,7 @@ test.describe('Login Page Tests', () => {
     await page.screenshot({ path: 'tests/financial-app/screenshots/login/login-fail[invalid-password].png' });
   });
 
-  test('failed login with invalid (email-format) credentials', async () => {
+  test('TC-Log-001-005 - Failed login with invalid (email-format) credentials', async () => {
     // Fill in invalid email format and valid password
     await Login.inputCredentials(process.env.INVALID_EMAIL_FORMAT, process.env.VALID_PASSWORD);
 
@@ -150,7 +150,7 @@ test.describe('Login Page Tests', () => {
     await page.screenshot({ path: 'tests/financial-app/screenshots/login/login-fail[invalid-email-format].png' });
   });
 
-  test('failed login with empty (email) credentials', async () => {
+  test('TC-Log-001-006 - Failed login with empty (email) credentials', async () => {
     // Leave email empty and fill in valid password
     await Login.inputCredentials('', process.env.VALID_PASSWORD);
 
@@ -166,7 +166,7 @@ test.describe('Login Page Tests', () => {
     await page.screenshot({ path: 'tests/financial-app/screenshots/login/login-fail[empty-email].png' });
   });
 
-  test('failed login with empty (password) credentials', async () => {
+  test('TC-Log-001-007 - Failed login with empty (password) credentials', async () => {
     // Fill in valid email and leave password empty
     await Login.inputCredentials(process.env.VALID_EMAIL, '');
 
@@ -182,7 +182,7 @@ test.describe('Login Page Tests', () => {
     await page.screenshot({ path: 'tests/financial-app/screenshots/login/login-fail[empty-password].png' });
   });
 
-  test('toggle show/hide password input', async () => {
+  test('TC-Log-002-001 - Toggle show/hide password input', async () => {
     // Fill in password to enable the input field
     await Login.inputCredentials('', process.env.INVALID_PASSWORD);
 
@@ -202,6 +202,22 @@ test.describe('Login Page Tests', () => {
     await toggleButton.click();
     await expect(passwordInput).toHaveAttribute('type', 'password'); // Password should be hidden again
     await page.screenshot({ path: 'tests/financial-app/screenshots/login/login-password-hidden.png' }); // Screenshot
+  });
+
+  test('TC-Log-003-001 - Navigate to Register page via "Register" link', async () => {
+    // Click on the "Register" link
+    const registerLink = page.locator('a[href="/register"]', { hasText: 'Register' });
+    await registerLink.click();
+
+    // Wait for navigation to register page
+    await page.waitForURL('/register');
+
+    // Verify URL and title of the register page
+    await expect(page).toHaveURL('/register');
+    await expect(page).toHaveTitle('Financial App | Register');
+
+    // Take screenshot of the register page
+    await page.screenshot({ path: 'tests/financial-app/screenshots/login/navigate-to-register.png' });
   });
 
 });

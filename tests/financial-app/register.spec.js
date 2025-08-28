@@ -37,7 +37,7 @@ test.describe('Register Page Tests', () => {
         await context.close();
     })
 
-    test('should display register page', async () => {
+    test('Should display register page', async () => {
         // URL and Title
         await expect(page).toHaveURL('/register');
         await expect(page).toHaveTitle('Financial App | Register');
@@ -59,7 +59,7 @@ test.describe('Register Page Tests', () => {
         await page.screenshot({ path: 'tests/financial-app/screenshots/register/register-page.png' });
     });
 
-    test('successfully registered with valid credentials', async () => {
+    test('TC-Reg-001-001 - Successfully registered with valid credentials', async () => {
         // Input registration details
         await Register.inputRegistrationDetails(
             process.env.NEW_FULLNAME,
@@ -81,7 +81,7 @@ test.describe('Register Page Tests', () => {
         await page.screenshot({ path: 'tests/financial-app/screenshots/register/register-success.png' });
     });
 
-    test('failed registration with empty (fullName, email & password) credentials', async () => {
+    test('TC-Reg-001-002 - Failed registration with empty (fullName, email & password) credentials', async () => {
         // Leave fullName, email and password empty
         await Register.inputRegistrationDetails();
 
@@ -97,7 +97,67 @@ test.describe('Register Page Tests', () => {
         await page.screenshot({ path: 'tests/financial-app/screenshots/register/register-fail[empty-fullName-email-password].png' });
     });
 
-    test('failed registration with invalid (email already in use) credentials', async () => {
+    test('TC-Reg-001-003 - Failed registration with empty (fullName) credentials', async () => {
+        // Leave fullName empty and fill in email and password
+        await Register.inputRegistrationDetails(
+            '',
+            'newemail@mail.com',
+            'password123'
+        );
+
+        // Submit registeration form
+        await Register.register();
+
+        // Check validation message for fullName input
+        const fullNameInput = page.locator('#fullName');
+        const fullNameValidationMessage = await fullNameInput.evaluate((el) => el.validationMessage);
+        expect(fullNameValidationMessage).toBe("Please fill out this field.");
+
+        // Take screenshot of validation error
+        await page.screenshot({ path: 'tests/financial-app/screenshots/register/register-fail[empty-fullName].png' });
+    });
+
+    test('TC-Reg-001-004 - Failed registration with empty (email) credentials', async () => {
+        // Leave email empty and fill in fullName and password
+        await Register.inputRegistrationDetails(
+            'Test User',
+            '',
+            'password123'
+        );
+
+        // Submit registeration form
+        await Register.register();
+
+        // Check validation message for email input
+        const emailInput = page.locator('#email');
+        const emailValidationMessage = await emailInput.evaluate((el) => el.validationMessage);
+        expect(emailValidationMessage).toBe("Please fill out this field.");
+
+        // Take screenshot of validation error
+        await page.screenshot({ path: 'tests/financial-app/screenshots/register/register-fail[empty-email].png' });
+    });
+
+    test('TC-Reg-001-005 - Failed registration with empty (password) credentials', async () => {
+        // Leave password empty and fill in fullName and email
+        await Register.inputRegistrationDetails(
+            'Test User',
+            'newemail@mail.com',
+            ''
+        );
+
+        // Submit registeration form
+        await Register.register();        
+
+        // Check validation message for password input
+        const passwordInput = page.locator('#password');
+        const passwordValidationMessage = await passwordInput.evaluate((el) => el.validationMessage);
+        expect(passwordValidationMessage).toBe("Please fill out this field.");
+
+        // Take screenshot of validation error
+        await page.screenshot({ path: 'tests/financial-app/screenshots/register/register-fail[empty-password].png' });
+    });
+
+    test('TC-Reg-001-006 - Failed registration with invalid (email already in use) credentials', async () => {
         // Input invalid registration details
         await Register.inputRegistrationDetails(
             'Test User',
@@ -118,7 +178,7 @@ test.describe('Register Page Tests', () => {
         await page.screenshot({ path: 'tests/financial-app/screenshots/register/register-fail[email-already-in-use].png' });
     });
 
-    test('failed registration with invalid (email format) credentials', async () => {
+    test('TC-Reg-001-007 - Failed registration with invalid (email format) credentials', async () => {
         // Input invalid registration details
         await Register.inputRegistrationDetails(
             'Test User',
@@ -141,7 +201,7 @@ test.describe('Register Page Tests', () => {
         await page.screenshot({ path: 'tests/financial-app/screenshots/register/register-fail[invalid-email-format].png' });
     });
 
-    test('failed registration with invalid (password too short) credentials', async () => {
+    test('TC-Reg-001-008 - Failed registration with invalid (password too short) credentials', async () => {
         // Input invalid registration details
         await Register.inputRegistrationDetails(
             'Test User',
@@ -161,4 +221,18 @@ test.describe('Register Page Tests', () => {
         // Take screenshot of the error message
         await page.screenshot({ path: 'tests/financial-app/screenshots/register/register-fail[password-too-short].png' });
     });
+
+    test('TC-Reg-002-001 - Navigate to Login page via "Login" link', async () => {
+        // Click on the "Login" link
+        const loginLink = page.locator('a[href="/login"]', { hasText: 'Login' });
+        await loginLink.click();
+
+        // Verify navigation to login page
+        await expect(page).toHaveURL('/login');
+        await expect(page).toHaveTitle('Financial App | Login');
+
+        // Take screenshot of the login page
+        await page.screenshot({ path: 'tests/financial-app/screenshots/register/navigate-to-login.png' });
+    });
+
 })
